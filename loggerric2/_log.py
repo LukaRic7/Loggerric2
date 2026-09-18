@@ -122,7 +122,7 @@ class Log:
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
         if 'info' in cls._disabled_levels: return
 
-        string = ' '.join(values)
+        string = ' '.join([str(v) for v in values])
         string_f = string
 
         hl = hl or highlight
@@ -152,7 +152,7 @@ class Log:
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
         if 'warn' in cls._disabled_levels: return
 
-        string = ' '.join(values)
+        string = ' '.join([str(v) for v in values])
         string_f = string
 
         hl = hl or highlight
@@ -182,7 +182,7 @@ class Log:
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
         if 'error' in cls._disabled_levels: return
 
-        string = ' '.join(values)
+        string = ' '.join([str(v) for v in values])
         string_f = string
 
         hl = hl or highlight
@@ -212,7 +212,7 @@ class Log:
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
         if 'debug' in cls._disabled_levels: return
 
-        string = ' '.join(values)
+        string = ' '.join([str(v) for v in values])
         string_f = string
 
         hl = hl or highlight
