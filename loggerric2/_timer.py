@@ -2,7 +2,7 @@ from types import TracebackType
 from time import perf_counter
 from colorama import Fore
 
-from source import Timestamp, LogManager
+from loggerric2 import Timestamp, LogManager
 
 class Timer:
     """

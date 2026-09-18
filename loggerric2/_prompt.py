@@ -1,6 +1,6 @@
 from colorama import Fore
 
-from source import Timestamp, LogManager
+from loggerric2 import Timestamp, LogManager
 
 def prompt(text:str, options:list[str]=None, default_option:str=None,
            auto_complete_option:bool=True, loop_until_valid:bool=False,

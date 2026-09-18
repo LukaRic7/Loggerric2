@@ -3,7 +3,7 @@ from typing import Iterable
 from colorama import Fore
 import math
 
-from source import Timestamp, LogManager
+from loggerric2 import Timestamp, LogManager
 
 class ProgressBar:
     """

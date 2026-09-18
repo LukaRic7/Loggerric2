@@ -1,6 +1,6 @@
 from colorama import Fore
 
-from source import Timestamp, LogManager
+from loggerric2 import Timestamp, LogManager
 
 class Table:
     """

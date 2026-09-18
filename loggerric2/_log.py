@@ -3,7 +3,7 @@ from threading import Lock
 from colorama import Fore
 from pathlib import Path
 
-from source import Timestamp, LogManager
+from loggerric2 import Timestamp, LogManager
 
 class Log:
     """
