@@ -206,7 +206,10 @@ class LogManager:
 
         caller_file = cls._get_caller_path(skip_extra=skip_extra)
         if caller_file is None:
-            return None
+            if no_ansi:
+                return '<unknown-file> '
+            else:
+                return f'{Fore.MAGENTA}<unknown-file>{Fore.RESET} '
 
         segments = str(caller_file).split('\\')
         path = '\\'.join(segments[max(0, len(segments) - cls._caller_file_depth):])
