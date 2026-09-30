@@ -1,3 +1,4 @@
+from typing import Literal
 from colorama import Fore
 from pathlib import Path
 import inspect
@@ -7,6 +8,8 @@ class LogManager:
     **Handles getting and formatting of the caller file.**
     
     *Methods*:
+    - `set_state(state:Literal['enabled', 'disabled']) -> None`: Determine if the caller
+    path should be included when logging to the CLI.
     - `get_method_caller() -> str`: Get the file of the function or method that called
     this method.
     - `get_class_instance_owner_file() -> str`: Called from inside class init to find
@@ -28,6 +31,7 @@ class LogManager:
     _blacklisted_paths = set()
     _caller_file_depth = 2
     _ignored_paths = { Path(__file__).resolve().parent, }
+    _disable_cli_path = False
 
     # -------------------------------------------
     #  Private Methods
@@ -142,6 +146,17 @@ class LogManager:
     #  Public Methods
     # -------------------------------------------
 
+    @classmethod
+    def set_state(cls, state:Literal['enabled', 'disabled']):
+        """
+        **Determine if the caller path should be included when logging.**
+        
+        *Parameters*:
+        - `state` (Literal['enabled', 'disabled']): The new state.
+        """
+
+        cls._disable_cli_path = state == 'disabled'
+
     @staticmethod
     def get_method_caller() -> str:
         """
@@ -203,6 +218,9 @@ class LogManager:
         *Returns*:
         - (str): The formatted caller file with ANSI.
         """
+
+        if cls._disable_cli_path:
+            return ''
 
         caller_file = cls._get_caller_path(skip_extra=skip_extra)
         if caller_file is None:

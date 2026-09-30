@@ -66,6 +66,8 @@ def prompt(text:str, options:list[str]=None, default_option:str=None,
 
             print(f'{Fore.RED}"{Fore.YELLOW}{user_response}{Fore.RED}" Is not valid!')
 
-        return Fore.RESET + user_response.strip() + Fore.RESET
+        print(Fore.RESET, end='')
+
+        return user_response.strip()
     except KeyboardInterrupt:
         print(f'\n{Fore.RED}Keyboard interrupt detected, closing prompt!{Fore.RESET}')
