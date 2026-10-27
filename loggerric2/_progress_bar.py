@@ -16,13 +16,15 @@ class ProgressBar:
     - `update(current_index) -> None`: Updates the progressbar in the console.
     """
 
-    def __init__(self, iterable:Iterable, name:str='Progress', bar_length:int=30,
-                 percent_complete:bool=True, progress_line:bool=True,
+    def __init__(self, iterable:Iterable=None, end_index:int=None, name:str='Progress',
+                 bar_length:int=30, percent_complete:bool=True, progress_line:bool=True,
                  estimated_time_left:bool=True, elapsed_time:bool=False,
                  fraction:bool=False, amount_left:bool=False):
         """
         *Parameters*:
-        - `iterable` (Iterable): The iterable to iterate and display a progress for.
+        - `iterable` (Iterable): The iterable to iterate and display a progress for. If
+        omitted the `end_index` must be specified.
+        - `end_index` (int): Only use this if the iterable is not set.
         - `name` (str): The name of the progress. Can be changed during iteration.
         - `bar_length` (int): The length of the progress bar line segment.
         - `percent_complete` (bool): If true, shows the percentage until complete with 1
@@ -42,7 +44,7 @@ class ProgressBar:
         self._name = name
         self._bar_length = bar_length
 
-        self._end_index = len(iterable)
+        self._end_index = len(self._iterable) if self._iterable else end_index
         self._start_time = None
         self._current_index = 0
         self._longest_name_len = len(self._name)
@@ -59,15 +61,20 @@ class ProgressBar:
     def __iter__(self):
         self._start_time = perf_counter()
 
-        update_every = math.floor(self._end_index / 1000)
+        update_every = max(1, math.floor(self._end_index / 1000))
 
         for item in self._iterable:
             self._current_index += 1
 
-            if update_every <= 1 or self._current_index % update_every == 0:
-                self.update(self._current_index)
+            if self._current_index % update_every == 0:
+                self._update(self._current_index)
 
             yield item
+
+        if self._current_index > 0:
+            if self._current_index % update_every != 0:
+                self._update(self._current_index)
+            print()
 
     # -------------------------------------------
     #  Private Methods
@@ -174,6 +181,34 @@ class ProgressBar:
         return (f'{Fore.BLUE}[{Fore.CYAN}{current_index:,}{Fore.BLUE}'
                 + f'/{Fore.CYAN}{self._end_index:,}{Fore.BLUE}]{Fore.RESET}')
 
+    def _update(self, current_index:int):
+        """
+        **Updates the progressbar in the console.**
+        
+        *Parameters*:
+        - `current_index` (int): The index the progress is at.
+        """
+
+        ts = Timestamp.get()
+        caller = LogManager.get_caller_file()
+
+        progress_bar = f'{ts}{caller}{Fore.BLUE}{self._name}:'
+        if self._percent_complete:
+            progress_bar += ' ' + self._build_percent_complete(current_index)
+        if self._progress_line:
+            progress_bar += ' ' + self._build_progress_line(current_index)
+        if self._estimated_time_left:
+            progress_bar += ' ' + self._build_estimated_time_left(current_index)
+        if self._elapsed_time:
+            progress_bar += ' ' + self._build_elapsed_time()
+        if self._amount_left:
+            progress_bar += ' ' + self._build_amount_left(current_index)
+        if self._fraction:
+            progress_bar += ' ' + self._build_fraction(current_index)
+
+        if not LogManager.is_blacklisted(self._instance_owner_file):
+            print(f'\033[2K{progress_bar}', end='\r')
+
     # -------------------------------------------
     #  Public Methods
     # -------------------------------------------
@@ -197,33 +232,11 @@ class ProgressBar:
         - `current_index` (int): The index the progress is at.
         """
 
-        ts = Timestamp.get()
-        caller = LogManager.get_caller_file()
+        if self._start_time is None:
+            self._start_time = perf_counter()
 
-        progress_bar = f'{ts}{caller}{Fore.BLUE}{self._name}:'
-        max_len = self._longest_name_len + 1
+        self._current_index = max(1, current_index)
+        self._update(self._current_index)
 
-        if self._percent_complete:
-            progress_bar += ' ' + self._build_percent_complete(current_index)
-            max_len += 7
-        if self._progress_line:
-            progress_bar += ' ' + self._build_progress_line(current_index)
-            max_len += self._bar_length + 3
-        if self._estimated_time_left:
-            progress_bar += ' ' + self._build_estimated_time_left(current_index)
-            max_len += 14
-        if self._elapsed_time:
-            progress_bar += ' ' + self._build_elapsed_time()
-            max_len += 12
-        if self._amount_left:
-            progress_bar += ' ' + self._build_amount_left(current_index)
-            max_len += len(f'{self._end_index - current_index:,}') + 11
-        if self._fraction:
-            progress_bar += ' ' + self._build_fraction(current_index)
-            max_len += len(f'{current_index:,}') + len(f'{self._end_index:,}') + 3
-
-        if not LogManager.is_blacklisted(self._instance_owner_file):
-            print(progress_bar + (' ' * (max_len - len(progress_bar))), end='\r')
-
-        if current_index == self._end_index:
+        if self._current_index == self._end_index:
             print()

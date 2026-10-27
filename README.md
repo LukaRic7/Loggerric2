@@ -67,6 +67,12 @@ import loggerric2 as lr2
 # This will print a progress bar to the CLI.
 for i in lr2.ProgressBar(range(100)):
     ...
+
+# Can also create an instance instead of wrapping an iterator.
+prog = ProgressBar(end_index=10)
+for i in range(1, 11):
+    ...
+    prog.update(i) # Need to manually call update.
 ```
 
 ### `Table` class
