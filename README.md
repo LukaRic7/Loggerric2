@@ -89,6 +89,18 @@ rows = (
 lr2.Table.minimalistic(headers, rows)
 lr2.Table.boxed(headers, rows)
 lr2.Table.borderless(headers, rows)
+
+# Also supports building a table from a list of dictionaries
+
+products = [
+    { 'Item': 'Socks', 'Stock': 24, 'Price': '$2.24' },
+    { 'Item': 'Trex', 'Stock': 1, 'Price': '$12.2M', 'Is Rare': True }, # Extra cols does not break
+    { 'Item': 'Apple', 'Stock': 912, 'Price': '$0.54' }
+]
+
+Table.minimalistic(lod=products)
+Table.boxed(lod=products)
+Table.borderless(lod=products)
 ```
 
 ### `Timer` class

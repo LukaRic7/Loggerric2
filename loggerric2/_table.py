@@ -74,22 +74,61 @@ class Table:
 
         return column_lengths
 
+    def _build_from_lod(list_of_dicts:list[dict]) -> tuple[tuple, tuple[tuple]]:
+        """
+        **Build headers and rows from a list of dictionaries.**
+        
+        *Parameters*:
+        - `list_of_dicts` (list[dict]): The list of dictionaries to build from.
+        
+        *Returns*:
+        - (tuple[tuple, tuple[tuple]]): The headers and rows.
+        """
+
+        headers = [] # Dont use sets to keep order
+        rows = []
+
+        for data in list_of_dicts:
+            for key in data.keys():
+                if key not in headers:
+                    headers.append(key)
+
+        for data in list_of_dicts:
+            row = []
+            for key in headers:
+                row.append(data.get(key, 'N/A'))
+            rows.append(row)
+
+        return tuple(headers), tuple(rows)
+
     # -------------------------------------------
     #  Public Methods
     # -------------------------------------------
 
     @staticmethod
-    def minimalistic(headers:tuple, rows:tuple[tuple]):
+    def minimalistic(headers:tuple=None, rows:tuple[tuple]=None, lod:list[dict]=None):
         """
         **Create a table with the minimalistic style.**
         
         *Parameters*:
         - `headers` (tuple): The table headers.
         - `rows` (tuple[tuple]): The table rows.
+        - `lod` (list[dict]): List of dictionaries, omit if using headers and rows.
+
+        *Raises*:
+        - (TypeError): If all parameters are empty.
         """
 
+        if headers is None and rows is None and lod is None:
+            raise TypeError('Either omit headers and rows, or lod, not all')
+
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
+        
+        if lod:
+            headers, rows = Table._build_from_lod(lod)
+
         if not Table._is_items_consistant(headers, rows): return
+
 
         headers, rows = Table._sanitize_items(headers, rows)
         column_lengths = Table._get_column_lengths(headers, rows)
@@ -112,16 +151,27 @@ class Table:
             print(Fore.CYAN + row_str + Fore.RESET)
 
     @staticmethod
-    def boxed(headers:tuple, rows:tuple[tuple]):
+    def boxed(headers:tuple=None, rows:tuple[tuple]=None, lod:list[dict]=None):
         """
         **Create a table with the boxed style.**
         
         *Parameters*:
         - `headers` (tuple): The table headers.
         - `rows` (tuple[tuple]): The table rows.
+        - `lod` (list[dict]): List of dictionaries, omit if using headers and rows.
+
+        *Raises*:
+        - (TypeError): If all parameters are empty.
         """
 
+        if headers is None and rows is None and lod is None:
+            raise TypeError('Either omit headers and rows, or lod, not all')
+
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
+        
+        if lod:
+            headers, rows = Table._build_from_lod(lod)
+
         if not Table._is_items_consistant(headers, rows): return
 
         headers, rows = Table._sanitize_items(headers, rows)
@@ -158,16 +208,27 @@ class Table:
         print(Fore.BLUE + sep() + Fore.RESET)
 
     @staticmethod
-    def borderless(headers:tuple, rows:tuple[tuple]):
+    def borderless(headers:tuple=None, rows:tuple[tuple]=None, lod:list[dict]=None):
         """
         **Create a table with the borderless style.**
         
         *Parameters*:
         - `headers` (tuple): The table headers.
         - `rows` (tuple[tuple]): The table rows.
+        - `lod` (list[dict]): List of dictionaries, omit if using headers and rows.
+
+        *Raises*:
+        - (TypeError): If all parameters are empty.
         """
 
+        if headers is None and rows is None and lod is None:
+            raise TypeError('Either omit headers and rows, or lod, not all')
+
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
+        
+        if lod:
+            headers, rows = Table._build_from_lod(lod)
+
         if not Table._is_items_consistant(headers, rows): return
 
         headers, rows = Table._sanitize_items(headers, rows)
