@@ -35,6 +35,8 @@ class Log:
     _filelogging_disabled = True
     _filelogging_fulldir_path = None
     _filelogging_name = f'output.log'
+    _last_log_message = None
+    _log_repeat_count = 0
 
     # -------------------------------------------
     #  Private Methods
@@ -110,6 +112,8 @@ class Log:
     def info(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
         """
         **Log an information level value to the CLI.**
+
+        Supports automatic deduplication.
         
         *Parameters*:
         - `*values` (any): The values to print.
@@ -130,8 +134,15 @@ class Log:
             string_f = cls._highlight_text(string, hl, Fore.YELLOW, Fore.GREEN)
 
         with cls._thread_lock:
-            print(Timestamp.get() + LogManager.get_caller_file()
+            msg = (Timestamp.get() + LogManager.get_caller_file()
                 + f'{Fore.GREEN}[i] {string_f}{Fore.RESET}')
+            if msg == cls._last_log_message:
+                cls._log_repeat_count += 1
+                print(f'\033[F\033[K{msg} {Fore.CYAN}({cls._log_repeat_count:,}x)')
+            else:
+                cls._log_repeat_count = 1
+                cls._last_log_message = msg
+                print(msg)
 
             if not cls._filelogging_disabled:
                 cls._log2file(f'[i] {string}')
@@ -140,6 +151,8 @@ class Log:
     def warn(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
         """
         **Log a warning level value to the CLI.**
+
+        Supports automatic deduplication.
         
         *Parameters*:
         - `*values` (any): The values to print.
@@ -160,8 +173,15 @@ class Log:
             string_f = cls._highlight_text(string, hl, Fore.WHITE, Fore.YELLOW)
 
         with cls._thread_lock:
-            print(Timestamp.get() + LogManager.get_caller_file()
+            msg = (Timestamp.get() + LogManager.get_caller_file()
                 + f'{Fore.YELLOW}[w] {string_f}{Fore.RESET}')
+            if msg == cls._last_log_message:
+                cls._log_repeat_count += 1
+                print(f'\033[F\033[K{msg} {Fore.CYAN}({cls._log_repeat_count:,}x)')
+            else:
+                cls._log_repeat_count = 1
+                cls._last_log_message = msg
+                print(msg)
 
             if not cls._filelogging_disabled:
                 cls._log2file(f'[w] {string}')
@@ -170,6 +190,8 @@ class Log:
     def error(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
         """
         **Log an error level value to the CLI.**
+
+        Supports automatic deduplication.
         
         *Parameters*:
         - `*values` (any): The values to print.
@@ -190,8 +212,15 @@ class Log:
             string_f = cls._highlight_text(string, hl, Fore.YELLOW, Fore.RED)
 
         with cls._thread_lock:
-            print(Timestamp.get() + LogManager.get_caller_file()
+            msg = (Timestamp.get() + LogManager.get_caller_file()
                 + f'{Fore.RED}[!] {string_f}{Fore.RESET}')
+            if msg == cls._last_log_message:
+                cls._log_repeat_count += 1
+                print(f'\033[F\033[K{msg} {Fore.CYAN}({cls._log_repeat_count:,}x)')
+            else:
+                cls._log_repeat_count = 1
+                cls._last_log_message = msg
+                print(msg)
 
             if not cls._filelogging_disabled:
                 cls._log2file(f'[!] {string}')
@@ -200,6 +229,8 @@ class Log:
     def debug(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
         """
         **Log a debug level value to the CLI.**
+
+        Supports automatic deduplication.
         
         *Parameters*:
         - `*values` (any): The values to print.
@@ -220,8 +251,15 @@ class Log:
             string_f = cls._highlight_text(string, hl, Fore.YELLOW, Fore.LIGHTBLACK_EX)
 
         with cls._thread_lock:
-            print(Timestamp.get() + LogManager.get_caller_file()
+            msg = (Timestamp.get() + LogManager.get_caller_file()
                 + f'{Fore.LIGHTBLACK_EX}[-] {string_f}{Fore.RESET}')
+            if msg == cls._last_log_message:
+                cls._log_repeat_count += 1
+                print(f'\033[F\033[K{msg} {Fore.CYAN}({cls._log_repeat_count:,}x)')
+            else:
+                cls._log_repeat_count = 1
+                cls._last_log_message = msg
+                print(msg)
 
             if not cls._filelogging_disabled:
                 cls._log2file(f'[-] {string}')

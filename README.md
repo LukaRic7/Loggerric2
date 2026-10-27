@@ -35,6 +35,7 @@ pip install colorama
 ```py
 import loggerric2 as lr2
 
+# All logging supports automatic deduplication
 lr2.Log.info('Output an information message!')
 lr2.Log.warn('You can also do warning messages!', highlight='warning')
 lr2.Log.error('Here is an error message!', hl='error')
