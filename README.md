@@ -31,6 +31,13 @@ pip install colorama
 
 ---
 
+### `get_version` method
+```py
+import loggerric2 as lr2
+
+lr2.get_version() # Uses the Major.Minor.Patch format.
+```
+
 ### `Log` class
 ```py
 import loggerric2 as lr2
