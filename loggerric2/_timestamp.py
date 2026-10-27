@@ -107,8 +107,8 @@ class Timestamp:
         **Set the timezone to use in the timestamps.**
         
         *Parameters*:
-        - `timezone` (timezone): Timezone to use, if not omitted, the timezone will be
-        the host computers current timezone.
+        - `timezone` (timezone): Timezone to use, if omitted, the timezone will be the
+        host computers current timezone.
         """
 
         cls._timezone = timezone
