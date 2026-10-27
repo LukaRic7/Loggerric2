@@ -13,9 +13,19 @@ from loggerric2._prompt import prompt
 from loggerric2._pretty_print import pretty_print, pp
 from loggerric2._log import Log
 
+def get_version() -> str:
+    """
+    **Get the current Loggerric2 version.**
+
+    *Returns*:
+    - (str): The current version, using Major.Minor.Patch format.
+    """
+
+    return '1.1.0'
+
 # Expose functions/classes
 __all__ = ['Timestamp', 'LogManager', 'Timer', 'ProgressBar', 'Table', 'prompt',
-           'pretty_print', 'pp', 'Log']
+           'pretty_print', 'pp', 'Log', 'get_version']
 
 # Initialize Colorama
 init(autoreset=True)
