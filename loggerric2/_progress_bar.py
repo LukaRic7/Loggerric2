@@ -38,7 +38,13 @@ class ProgressBar:
         amount of iterations to be made.
         - `elapsed_time` (bool): If true, shows the elapsed time since the start of
         iteration.
+
+        *Raises*:
+        - (TypeError): If both `iterable` and `end_index` is None.
         """
+
+        if iterable is None and end_index is None:
+            raise TypeError('Both iterable and end_index cannot be None')
 
         self._iterable = iterable
         self._name = name
