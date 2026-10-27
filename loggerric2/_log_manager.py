@@ -31,7 +31,7 @@ class LogManager:
     _blacklisted_paths = set()
     _caller_file_depth = 2
     _ignored_paths = { Path(__file__).resolve().parent, }
-    _disable_cli_path = False
+    _disable_cli_path = True
 
     # -------------------------------------------
     #  Private Methods
