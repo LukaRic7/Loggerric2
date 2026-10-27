@@ -187,7 +187,8 @@ class Log:
                 cls._log2file(f'[w] {string}')
 
     @classmethod
-    def error(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
+    def error(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None,
+              exception:Exception=None, e:Exception=None, exit_code:int=None):
         """
         **Log an error level value to the CLI.**
 
@@ -199,10 +200,19 @@ class Log:
         given values.
         - `hl` (str|tuple[str]): Does the exact same as the `highlight` but is just a
         shorter argument.
+        - `exception` (Exception): Print information about the passed exception.
+        - `e` (Exception): Does the exact same as the `exception` but is just a shorter
+        argument.
+        - `exit_code` (int): Will exit the program with the given code. If omitted the
+        program will not exit.
         """
 
         if LogManager.is_blacklisted(LogManager.get_method_caller()): return
         if 'error' in cls._disabled_levels: return
+
+        if len(values) > 0 and isinstance(values[0], Exception):
+            e = values[0]
+            values = tuple()
 
         string = ' '.join([str(v) for v in values])
         string_f = string
@@ -211,9 +221,17 @@ class Log:
         if hl:
             string_f = cls._highlight_text(string, hl, Fore.YELLOW, Fore.RED)
 
+        exception_string = ''
+
+        e = e or exception
+        if e:
+            args = e.args[0] if len(e.args) == 1 else str(e.args)
+            exception_string = f'{Fore.LIGHTRED_EX}{args}'
+            string_f += ' ' if len(string_f) > 0 else ''
+
         with cls._thread_lock:
             msg = (Timestamp.get() + LogManager.get_caller_file()
-                + f'{Fore.RED}[!] {string_f}{Fore.RESET}')
+                + f'{Fore.RED}[!] {string_f}{exception_string}{Fore.RESET}')
             if msg == cls._last_log_message:
                 cls._log_repeat_count += 1
                 print(f'\033[F\033[K{msg} {Fore.CYAN}({cls._log_repeat_count:,}x)')
@@ -224,6 +242,9 @@ class Log:
 
             if not cls._filelogging_disabled:
                 cls._log2file(f'[!] {string}')
+
+        if exit_code is not None:
+            exit(exit_code)
 
     @classmethod
     def debug(cls, *values, highlight:str|tuple[str]=None, hl:str|tuple[str]=None):
@@ -309,7 +330,7 @@ class Log:
         *Parameters*:
         - `path` (str): The path that the logfiles will be in. Defaults to a logs/
         folder in the parent directory of the caller.
-        - `filename` (str): The filename of the log, if not omitted it will
+        - `filename` (str): The filename of the log, if extension is omitted it will
         automatically set it's extension to .log
         """
 

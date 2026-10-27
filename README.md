@@ -48,6 +48,11 @@ lr2.Log.warn('You can also do warning messages!', highlight='warning')
 lr2.Log.error('Here is an error message!', hl='error')
 lr2.Log.debug('You can highlight multiple segments!', hl=['highlight', 'segments'])
 
+# Error logging accepts exception objects and an exit code for automatic exiting of the program
+lr2.Log.error(Exception('Oh no!'))
+lr2.Log.error('Custom message', e=Exception('Then the exception'))
+lr2.Log.error('Critical error!', exit_code=1) # Since `exit_code` is not None, it will quit
+
 lr2.Log.disable_level('debug') # Now all debug logs wont be logged to CLI or file.
 lr2.Log.enable_level('debug')  # Re-enable the debug logging level again.
 
