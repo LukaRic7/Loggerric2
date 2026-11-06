@@ -21,7 +21,7 @@ def get_version() -> str:
     - (str): The current version, using Major.Minor.Patch format.
     """
 
-    return '1.1.0'
+    return '1.1.1'
 
 # Expose functions/classes
 __all__ = ['Timestamp', 'LogManager', 'Timer', 'ProgressBar', 'Table', 'prompt',

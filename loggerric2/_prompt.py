@@ -1,10 +1,11 @@
 from colorama import Fore
+from typing import Type
 
 from loggerric2 import Timestamp, LogManager
 
 def prompt(text:str, options:list[str]=None, default_option:str=None,
            auto_complete_option:bool=True, loop_until_valid:bool=False,
-           case_sensitive:bool=False) -> str:
+           case_sensitive:bool=False, cast_to:Type[int|str|float|bool]=str) -> str:
     """
     **Prompt the user in the CLI.**
     
@@ -19,6 +20,9 @@ def prompt(text:str, options:list[str]=None, default_option:str=None,
     is chosen, this can be escaped with a keyboard interrupt.
     - `case_sensitive` (bool): If true, when comparing the users answer to the list of
     options, it will compare cases.
+    - `cast_to` (type[int|str|float|bool]): Cast the typed value into an object and
+    return the instatiated object (this works with custom objects too). Boolean casting
+    outside of custom objects support parsing: yes/no, y/n, 1/0
     
     *Returns*:
     - (str): The users answer.
@@ -37,6 +41,30 @@ def prompt(text:str, options:list[str]=None, default_option:str=None,
 
             user_response = input(Timestamp.get() + LogManager.get_caller_file()
                                   + f'{Fore.BLUE}{text}{options_f}: {Fore.YELLOW}')
+
+            if cast_to is not str:
+                try:
+                    # Support yes/no y/n 1/0 for boolean
+                    if cast_to is bool:
+                        ret = None
+                        if user_response.lower() in ('yes', 'y', 'true'):
+                            ret = True
+                        elif user_response.lower() in ('no', 'n', 'false'):
+                            ret = False
+                        elif user_response == '1':
+                            ret = True
+                        elif user_response == '0':
+                            ret = False
+                        else:
+                            raise ValueError # Don't attempt to cast random chars
+
+                    ret = cast_to(user_response)
+                    print(Fore.RESET, end='')
+                    return ret
+                except ValueError:
+                    print(f'{Fore.RED}"{Fore.YELLOW}{user_response}{Fore.RED}" Is not a'
+                          + f' valid "{Fore.YELLOW}{cast_to}{Fore.RED}" type!')
+                    continue
 
             # Break if not looping
             if not loop_until_valid: break
