@@ -141,6 +141,9 @@ option = prompt('Question', option=['One', 'Two'], case_sensitive=True)
 
 # And an autocomplete for long options or faster prompting
 option = prompt('Question', option=['One', 'Two'], auto_complete_option=True)
+
+# Cast your users return to another object directly
+integer = prompt('Number', cast_to=int)
 ```
 
 ### `Timestamp` class
