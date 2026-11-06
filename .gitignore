@@ -1,7 +1,6 @@
 __pycache__/
 
 testing/
-todo.md
 
 /pyproject.toml
 dist/
